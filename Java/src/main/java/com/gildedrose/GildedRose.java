@@ -28,10 +28,6 @@ class GildedRose {
         this.items = items;
     }
 
-    private void updateNormalOrConjuredQuality(Item item) {
-
-    }
-
     public void updateQuality() {
 
         for (Item item : items) {
