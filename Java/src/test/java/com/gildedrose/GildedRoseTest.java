@@ -9,9 +9,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class GildedRoseTest {
 
-    private static final int QUALITY_UPPER_LIMIT = 50;
-
-    private static final Item SULFURAS = new Item("Sulfuras, Hand of Ragnaros", -1, QUALITY_UPPER_LIMIT + 30);
+    private static final Item SULFURAS = new Item("Sulfuras, Hand of Ragnaros", -1, GildedRose.QUALITY_UPPER_LIMIT + 30);
 
     private static final Item CONJURED = new Item("Conjured Mana Cake", 3, 6);
     private static final Item EXPIRED_CONJURED = new Item("Conjured Mana Cake", -2, 6);
@@ -19,10 +17,10 @@ class GildedRoseTest {
     private static final Item NORMAL = new Item("Normal Item", 3, 5);
     private static final Item EXPIRED_NORMAL = new Item("Normal Item", -1, 3);
 
-    private static final Item BRIE = new Item("Aged Brie", 1, QUALITY_UPPER_LIMIT - 2);
+    private static final Item BRIE = new Item("Aged Brie", 1, GildedRose.QUALITY_UPPER_LIMIT - 2);
 
     private static final Item BACKSTAGEPASS_EARLY = new Item("Backstage passes to a TAFKAL80ETC concert", 11, 10);
-    private static final Item BACKSTAGEPASS_LATE = new Item("Backstage passes to a TAFKAL80ETC concert", 5, QUALITY_UPPER_LIMIT - 4);
+    private static final Item BACKSTAGEPASS_LATE = new Item("Backstage passes to a TAFKAL80ETC concert", 5, GildedRose.QUALITY_UPPER_LIMIT - 4);
     private static final Item BACKSTAGEPASS_EXPIRED = new Item("Backstage passes to a TAFKAL80ETC concert", 0, 15);
 
     @Test
@@ -92,15 +90,15 @@ class GildedRoseTest {
         app.updateQuality();
 
         Item actual = app.items[0];
-        assertEquals(QUALITY_UPPER_LIMIT - 1, actual.quality);
+        assertEquals(GildedRose.QUALITY_UPPER_LIMIT - 1, actual.quality);
         assertEquals(0, actual.sellIn);
 
         app.updateQuality();
-        assertEquals(QUALITY_UPPER_LIMIT, actual.quality);
+        assertEquals(GildedRose.QUALITY_UPPER_LIMIT, actual.quality);
         assertEquals(-1, actual.sellIn);
 
         app.updateQuality();
-        assertEquals(QUALITY_UPPER_LIMIT, actual.quality);
+        assertEquals(GildedRose.QUALITY_UPPER_LIMIT, actual.quality);
         assertEquals(-2, actual.sellIn);
     }
 
@@ -159,7 +157,7 @@ class GildedRoseTest {
         assertEquals(expectedEarlyQuality + 2, early.quality);
         assertEquals(expectedEarlySellIn - 1, early.sellIn);
         //Late doit se retrouver a la limite max de qualité et pas la dépasser
-        assertEquals(QUALITY_UPPER_LIMIT, late.quality);
+        assertEquals(GildedRose.QUALITY_UPPER_LIMIT, late.quality);
         assertEquals(expectedLateSellIn - 1, late.sellIn);
         assertEquals(0, expired.quality);
         assertEquals(expectedExpiredSellIn - 1, expired.sellIn);

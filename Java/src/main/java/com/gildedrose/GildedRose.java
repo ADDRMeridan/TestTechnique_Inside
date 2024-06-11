@@ -1,6 +1,10 @@
 package com.gildedrose;
 
+import java.util.function.Predicate;
+
 class GildedRose {
+
+    public static final int QUALITY_UPPER_LIMIT = 50;
 
     public static final String BACKSTAGEPASS_NAME = "Backstage passes to a TAFKAL80ETC concert";
     public static final String BRIE_NAME = "Aged Brie";
@@ -23,20 +27,20 @@ class GildedRose {
                     }
                 }
             } else {
-                if (item.quality < 50) {
+                if (item.quality < QUALITY_UPPER_LIMIT) {
                     //Brie + backstagepass refining
                     item.quality = item.quality + 1;
 
                     if (item.name.equals(BACKSTAGEPASS_NAME)) {
                         //Backstage only
                         if (item.sellIn < 11) {
-                            if (item.quality < 50) {
+                            if (item.quality < QUALITY_UPPER_LIMIT) {
                                 item.quality = item.quality + 1;
                             }
                         }
 
                         if (item.sellIn < 6) {
-                            if (item.quality < 50) {
+                            if (item.quality < QUALITY_UPPER_LIMIT) {
                                 item.quality = item.quality + 1;
                             }
                         }
@@ -63,7 +67,7 @@ class GildedRose {
                     }
                 } else {
                     //Brie refining
-                    if (item.quality < 50) {
+                    if (item.quality < QUALITY_UPPER_LIMIT) {
                         item.quality = item.quality + 1;
                     }
                 }
