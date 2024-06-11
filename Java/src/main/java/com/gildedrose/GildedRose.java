@@ -68,6 +68,8 @@ class GildedRose {
                     }
                 }
             }
+
+            item.quality = Integer.max(0, item.quality);
         }
     }
 }
