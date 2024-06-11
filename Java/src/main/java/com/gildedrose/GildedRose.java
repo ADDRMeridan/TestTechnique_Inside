@@ -14,6 +14,7 @@ class GildedRose {
     public void updateQuality() {
 
         for (Item item : items) {
+            //Normal & Sulfuras
             if (!item.name.equals(BRIE_NAME)
                     && !item.name.equals(BACKSTAGEPASS_NAME)) {
                 if (item.quality > 0) {
@@ -23,9 +24,11 @@ class GildedRose {
                 }
             } else {
                 if (item.quality < 50) {
+                    //Brie + backstagepass refining
                     item.quality = item.quality + 1;
 
                     if (item.name.equals(BACKSTAGEPASS_NAME)) {
+                        //Backstage only
                         if (item.sellIn < 11) {
                             if (item.quality < 50) {
                                 item.quality = item.quality + 1;
@@ -41,6 +44,7 @@ class GildedRose {
                 }
             }
 
+            //All except Sulfuras
             if (!item.name.equals(SULFURAS_NAME)) {
                 item.sellIn = item.sellIn - 1;
             }
@@ -54,9 +58,11 @@ class GildedRose {
                             }
                         }
                     } else {
+                        //Expired Backstagepass
                         item.quality = 0;
                     }
                 } else {
+                    //Brie refining
                     if (item.quality < 50) {
                         item.quality = item.quality + 1;
                     }
