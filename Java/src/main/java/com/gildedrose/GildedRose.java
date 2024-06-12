@@ -12,16 +12,16 @@ class GildedRose {
     public static final String CONJURED_NAME = "Conjured Mana Cake";
     public static final String SULFURAS_NAME = "Sulfuras, Hand of Ragnaros";
 
+    //Items that do not degrade in quality or with a specific update
     public static final Set<String> SPECIFIC_ITEMS = Set.of(BACKSTAGEPASS_NAME, BRIE_NAME, SULFURAS_NAME);
     //Items that don't have a selling deadline and never see their quality change
     public static final Set<String> ETERNAL_ITEMS = Set.of(SULFURAS_NAME);
 
+    private final Predicate<Item> isBackstagePass = item -> BACKSTAGEPASS_NAME.equals(item.name);
+    private final Predicate<Item> isEternalItem = item -> ETERNAL_ITEMS.contains(item.name);
+    private final Predicate<Item> isSpecificItem = item -> SPECIFIC_ITEMS.contains(item.name);
+    private final Predicate<Item> isConjuredItem = item -> CONJURED_NAME.equals(item.name);
     Item[] items;
-    private Predicate<Item> canBeRefined = item -> item.quality < QUALITY_UPPER_LIMIT;
-
-    private Predicate<Item> isEternalItem = item -> ETERNAL_ITEMS.contains(item.name);
-    private Predicate<Item> isSpecificItem = item -> SPECIFIC_ITEMS.contains(item.name);
-    private Predicate<Item> isConjuredItem = item -> CONJURED_NAME.equals(item.name);
 
     public GildedRose(Item[] items) {
 
@@ -31,53 +31,61 @@ class GildedRose {
     public void updateQuality() {
 
         for (Item item : items) {
+            //We can skip eternal items as they don't change
             if (isEternalItem.test(item)) {
-                continue; //We can skip eternal items as they don't change
+                continue;
             }
 
             if (!isSpecificItem.test(item)) {
                 updateQualityNormalOrConjuredItem(item);
             } else {
                 //Brie + backstagepass refining
-                item.quality = item.quality + 1;
+                item.quality++;
 
-                if (item.name.equals(BACKSTAGEPASS_NAME)) {
-                    //Backstage only
-                    if (item.sellIn < 11) {
-                        item.quality = item.quality + 1;
-                    }
-
+                if (isBackstagePass.test(item) && item.sellIn < 11) {
+                    item.quality++;
                     if (item.sellIn < 6) {
-                        item.quality = item.quality + 1;
+                        item.quality++;
                     }
                 }
             }
 
-            //All except Sulfuras
-            if (!item.name.equals(SULFURAS_NAME)) {
-                item.sellIn = item.sellIn - 1;
-            }
+            //Selling deadline update
+            item.sellIn = item.sellIn - 1;
 
+            //Manage expired items
             if (item.sellIn < 0) {
-                if (!item.name.equals(BRIE_NAME)) {
-                    if (!item.name.equals(BACKSTAGEPASS_NAME)) {
-                        updateQualityNormalOrConjuredItem(item);
-                    } else {
-                        //Expired Backstagepass
+                switch (item.name) {
+                    case BRIE_NAME:
+                        item.quality++;
+                        break;
+                    case BACKSTAGEPASS_NAME:
                         item.quality = 0;
-                    }
-                } else {
-                    //Brie refining
-                    item.quality = item.quality + 1;
+                        break;
+                    default:
+                        updateQualityNormalOrConjuredItem(item);
+                        break;
                 }
             }
 
             //Manage Quality bounds
-            if (!SULFURAS_NAME.equals(item.name)) {
-                item.quality = Integer.min(QUALITY_UPPER_LIMIT, item.quality); //Max quality
-                item.quality = Integer.max(0, item.quality); //Min quality
-            }
+            item.quality = constrainIntToBounds(item.quality, 0, QUALITY_UPPER_LIMIT);
         }
+    }
+
+    /**
+     * Constrains the given int within the given bounds
+     *
+     * @param toConstrain int that must be constrained
+     * @param lowerBound  must be lower than upperBound
+     * @param upperBound  must be higher than lowerBound
+     * @return lowerbound < toConstrain < upperBound = toConstrain
+     * <br/>toConstrain < lowerBound = lowerBound
+     * <br/>upperBound < toConstrain = upperBound
+     */
+    private int constrainIntToBounds(int toConstrain, int lowerBound, int upperBound) {
+
+        return Integer.max(lowerBound, Integer.min(upperBound, toConstrain));
     }
 
     private void updateQualityNormalOrConjuredItem(Item item) {
